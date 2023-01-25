@@ -11,7 +11,7 @@ public class EnemyProjectile : EnemyDamage //Will damage the player every time t
     public void ActivateProjectile()
     {
         lifetime = 0;
-        gameObject.SetActive(false);
+        gameObject.SetActive(true);
     }
 
     private void Update()
@@ -19,9 +19,14 @@ public class EnemyProjectile : EnemyDamage //Will damage the player every time t
         float movementSpeed = speed * Time.deltaTime;
         transform.Translate(movementSpeed, 0, 0);
 
-        lifetime += resetTime.deltaTime;
+        lifetime += Time.deltaTime;
         if (lifetime > resetTime)
             gameObject.SetActive(false);
+    }
 
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        base.OnTriggerEnter2D(collision);
+        gameObject.SetActive(false);
     }
 }
