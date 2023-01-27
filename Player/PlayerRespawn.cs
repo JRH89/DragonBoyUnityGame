@@ -13,9 +13,23 @@ public class PlayerRespawn : MonoBehaviour
         playerHealth = GetComponent<Health>();
     }
 
-    public LoadingManager Respawn()
+    public void Respawn()
     {
-        transform.position = currentCheckpoint.position;
+        playerHealth.Respawn();
+        transform.position = currentCheckpoint.position;       
+
+        Camera.main.GetComponent<CameraController>().MoveToNewRoom(currentCheckpoint.parent);
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.transform.tag == "Checkpoint")
+        {
+            currentCheckpoint = collision.transform;
+            SoundManager.instance.PlaySound(checkpointSound);
+            collision.GetComponent<Collider2D>().enabled = false;
+            collision.GetComponent<Animator>().SetTrigger("appear");
+        }
     }
 }
 
