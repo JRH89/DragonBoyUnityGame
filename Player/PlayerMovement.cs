@@ -28,49 +28,41 @@ public class PlayerMovement : MonoBehaviour
     {
         horizontalInput = Input.GetAxis("Horizontal");
      
-        //flip character when moving left
+        //Flip character to face direction of movement
         if(horizontalInput> 0.01f)
             transform.localScale = Vector3.one;
         else if (horizontalInput < -0.01f)
             transform.localScale = new Vector3(-1, 1, 1);
 
-        //Set animaotr params
+        //Set anim params
         anim.SetBool("run", horizontalInput != 0);
         anim.SetBool("grounded", isGrounded());
+    
+        //Jump
+        if (Input.GetKeyDown(KeyCode.Space))
+            Jump();
 
-        //Wall jump logic
-        if (wallJumpCooldown > 0.2f)
+            //Adjustable jump height!
+            if(Input.GetKeyUp(KeyCode.Space) && body.velocity.y > 0)
+                body.velocity = new Vector2(body.velocity.x, body.velocity.y / 2);
+        if (onWall())
         {
+            body.gravityScale = 0;
+            body.velocity = Vector2.zero;
+        }   
+        else
+        {
+            body.gravityScale = 7;
             body.velocity = new Vector2(horizontalInput * speed, body.velocity.y);
-
-            if (onWall() && !isGrounded())
-            {
-                body.gravityScale = 0;
-                body.velocity = Vector2.zero;
-            }
-            else   
-                body.gravityScale = 7;
-        
-            if (Input.GetKey(KeyCode.Space))
-            { 
-                Jump();
-
-                if(Input.GetKeyDown(KeyCode.Space) && isGrounded);
-            }
-                
-        }
-        else  
-            wallJumpCooldown += Time.deltaTime;
-
+        }    
     }
 
     private void Jump()
     {
         if(isGrounded())
         {
-            SoundManager.instance.PlaySound(jumpSound);
             body.velocity = new Vector2(body.velocity.x, jumpPower);
-            anim.SetTrigger("jump");
+            SoundManager.instance.PlaySound(jumpSound);
         }
         else if (onWall() && !isGrounded())
         {
