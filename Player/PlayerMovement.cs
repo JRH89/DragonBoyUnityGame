@@ -41,6 +41,9 @@ public class PlayerMovement : MonoBehaviour
 
     private void Update()
     {
+        if (DialogueManager.isActive == true)
+            return;
+
         horizontalInput = Input.GetAxis("Horizontal");
      
         if(horizontalInput> 0.01f)
